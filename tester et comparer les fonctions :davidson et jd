@@ -1,0 +1,45 @@
+
+%ce main permet de :
+%calculer une valeur propre (minimale ou maximale)
+%comparer la méthode de Jacobi-Davidson à celle de Davidson (résidus en
+%fonction du nombre d'itérations)
+
+
+clear all;
+n = 100; %taille de la matrice
+m = 75; %nombre d'itérations
+
+%choisir la matrice A à tester
+ A = Laplace1d(n);
+%A = Laplace2d(n,n);
+%A = Laplace3d(n,n,n);
+
+V(:,1) = ones(length(A),1); %sous espace qui ne contient qu'un vecteur au début
+
+tic()
+[erreur lambda y]=jd(A,m,V);  %calcul de la valeur propre avec affichage du temps d'exécution 
+lambda
+
+t_jd=toc(); % temps d'execution pour la méthode de Jacobi-Davidson
+t_jd
+
+
+tic()
+[erreur1 lambda1 y1]=Davidson(A,m,V); %calcul de la valeur propre avec affichage du temps d'exécution
+lambda1
+t_d=toc(); % temps d'execution pour la méthode de Davidson
+t_d
+
+
+plot(log10(erreur),'r'); 
+hold on;
+plot(log10(erreur1),'b'); 
+
+xlabel('nombre itérations');
+ylabel('log 10 de la norme résudielle');
+legend('Jacobi-Davidson','Davidson','Location','northeast');
+title('Résidus normalisés en fonction du nombre d itérations');
+
+
+
+
