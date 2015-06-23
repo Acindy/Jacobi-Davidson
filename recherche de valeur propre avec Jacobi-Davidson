@@ -1,0 +1,38 @@
+function[erreur lambda y]=jd(A,m,V)
+
+n=length(A);
+V = V / norm(V); %normalisation de l'espace vectoriel
+erreur = ones(m,1); %vecteur qui va contenir les erreurs obtenues à chaque itération (résidus normalisés)
+
+for i=2:m
+   
+    H = V'*A*V; %projection de A dans le sous espace
+   
+    [u theta]= eig(H); %calcul de la valeur propre de H
+    
+    %pour le calcul de la plus petite valeur propre de la matrice 
+    lambda=min(abs(diag(theta))); %récupération du min ou du max de la valeur propre
+    [f,g]=find(theta==min(abs(diag(theta)))); %récupération du vecteur propre correspondant
+     
+    %pour le calcul de la plus grande valeur propre
+    %lambda=max(abs(diag(theta))); 
+    %[f,g]=find(theta==max(abs(diag(theta))));
+    
+    u=u(:,g);
+    y = V*u; % calcul du vecteur propre de A
+    r = A*y - lambda*y; %calcul du résidu
+    erreur(i) = norm(r); %erreur obtenue
+    MAT=(eye(length(A),length(A)) - y*y')*(A - lambda*eye(length(A),length(A))) * (eye(length(A),length(A)) - y*y'); %calcul de la nouvelle
+   %direction pour augmenter le sous espace
+   %projection du résidu sur y orthogonallement
+    
+    t=gmres(MAT,-r); %résolution du système à l'aide du GMRES
+   
+    t = t - V*V'*t;  %double orthogonalisation du nouveau vecteur 
+    t = t - V*V'*t;
+    V(:,i) = t/norm(t); %augmentation de la taille du sous espace
+   
+    
+end
+end
+
