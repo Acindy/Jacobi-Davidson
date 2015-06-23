@@ -1,0 +1,7 @@
+function [ A ] = Laplace2d( n,m )
+
+A=kron(speye(m,m),laplace1d(n))+kron(laplace1d(m),speye(n,n));
+
+
+
+end
