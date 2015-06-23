@@ -1,0 +1,50 @@
+%ce main permet de :
+%calculer la valeur propre de la matrice A (min ou max) 
+%comparer la méthode de Jacobi-Davidson à celle de la puissance
+
+%%%%pour cette méthode, penser à MODIFIER la fonction jd en prenant le
+%%%%max des valeurs propres%%%%%%%%%%%%%%%%%%%%%%%%%%
+clear all;
+n=5; %taille de la matrice
+m =100; % nombre d'itérations
+
+%choix de la matrice
+%A=Laplace1d(n);
+%A=Laplace2d(n,n);
+A=Laplace3d(n,n,n);
+
+V(:,1) = ones(length(A),1); %sous espace 
+
+tic()
+[erreur1 lambda1]=JD(A,m,V); %calcul de la valeur propre avec Jacobi-Davidson
+lambda1
+t_jd=toc(); %temps d'execution de la méthode de Jacobi-Davidson
+t_jd
+
+h=1/(n+1);
+B=full(A);
+x0=zeros(length(B),1);
+x0(1)=1;
+
+tic()
+
+[lambda,w,iter]=eigpower(B,10^(-12),10^10,x0);
+erreur=abs(lambda-(4/(h*h)))
+
+erreur=[];
+for i=0:m
+    [lambda,v,iter]=eigpower(B,10^(-6),i,x0);
+    l=max(abs(eig(B)));
+    erreur=[erreur abs(l-lambda)];
+end;
+t_p=toc(); %temps d'execution de la méthode de la puissance 
+t_p
+
+plot(log10(erreur1),'r');
+hold on;
+plot([0:m],log10(erreur),'g');
+
+xlabel('nombre itérations');
+ylabel('log 10 de la norme résudielle');
+legend('Jacobi-Davidson','Méthode de la puissance','Location','northeast');
+ title('Résidus normalisés en fonction du nombre d itérations');
