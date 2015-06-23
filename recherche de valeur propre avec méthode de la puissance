@@ -1,0 +1,27 @@
+function [ lambda,x,iter ] = eigpower( A,tol,nmax,x0 ) %méthode de la puissance
+
+[n,m]=size(A);
+if n~=m,error('only for square matrices');
+end 
+if nargin==1
+    tol=1e-06;
+    x0=ones(n,1);
+    nmax=100;
+end
+x0=x0/norm(x0);
+pro=A*x0;
+lambda=x0'*pro;
+err=tol+1;
+iter=0;
+while err>tol*abs(lambda) & abs(lambda) ~=0 & iter <=nmax
+    x=pro;
+    x=x/norm(x);
+    pro=A*x;
+    lambdanew=x'*pro;
+    err=abs(lambdanew-lambda);
+    lambda=lambdanew;
+    iter=iter+1;
+end 
+
+
+end
