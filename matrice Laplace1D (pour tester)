@@ -1,0 +1,8 @@
+function [ A ] = Laplace1d(n) 
+
+h=1/(n+1); %mesure la précision de l'approximaton
+A=sparse(n,n); %ne stocke que les éléments qui sont différents de 0
+v=ones(n,1);
+ A=spdiags([-v 2*v -v],-1:1,n,n);
+ A=(1/h^2)*A;
+end
