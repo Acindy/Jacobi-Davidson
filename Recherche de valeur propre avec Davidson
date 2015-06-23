@@ -1,0 +1,34 @@
+function[erreur1 lambda1 y1]=Davidson(A,m,V)
+n=length(A);
+V = V / norm(V); %normalisation de l'espace vectoriel
+erreur1 = ones(m,1); %vecteur qui va contenir les erreurs obtenus à chaque itération
+
+for i=2:m
+   
+    H = V'*A*V; %projection de A dans le sous espace
+   
+    [u theta]= eig(H); %calcul de la valeur propre de H
+    
+    %pour le calcul de la plus petite valeur propre de la matrice
+    lambda1=min(diag(theta)); %récupération du min ou du max de la valeur propre
+    [f,g]=find(theta==min(diag(theta))); %récupération du vecteur propre correspondant
+    
+    %pour le calcul de la plus grande valeur propre
+    %lambda1=max(diag(theta)); 
+    %[f,g]=find(theta==max(diag(theta))); 
+    
+    u=u(:,g);
+    y1 = V*u; % calcul du vecteur propre de A
+    r = A*y1 - lambda1*y1; %calcul du résidu
+    erreur1(i) = norm(r); %erreur obtenue
+    MAT=diag(diag(A))-lambda1*eye(length(A)); %calcul de la nouvelle
+   %direction de recherche pour augmenter le sous espace
+   %projection du résidu sur y orthogonallement
+    
+    t=gmres(MAT,-r); %résolution du système à l'aide du GMRES
+    t = t - V*V'*t; %double orthogonalisation du nouveau vecteur 
+    t = t - V*V'*t;
+    V(:,i) = t/norm(t); %augmentation de la taille de notre espace
+    
+end
+end
