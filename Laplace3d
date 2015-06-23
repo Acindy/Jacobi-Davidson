@@ -1,0 +1,12 @@
+function [ G ] = Laplace3d( n,m,p )
+A=kron(speye(p,p),speye(m,m));
+B=kron(A,laplace1d(n));
+C=kron(speye(p,p),laplace1d(m));
+D=kron(C,speye(n,n));
+E=kron(laplace1d(p),speye(m,m));
+F=kron(E,speye(n,n));
+G=B+D+F;
+
+
+end
+
